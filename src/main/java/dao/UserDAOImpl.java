@@ -1,7 +1,5 @@
 package dao;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
-import datasource.DatasourceConfig;
 import model.User;
 
 import java.sql.Connection;
@@ -9,11 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDAOImpl implements UserDAO{
+public class UserDAOImpl implements UserDAO {
     private Connection connection;
-
-    public UserDAOImpl() {
-    }
 
     public UserDAOImpl(Connection connection) {
         this.connection = connection;

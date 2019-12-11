@@ -40,20 +40,10 @@ public class CommonUtils {
         /**
          * username cannot null, empty or already exist in DB
          */
-        boolean check = false;
+//        boolean check = false;
         if(username == null || username.isEmpty() || username.trim().isEmpty())
             return false;
-        try {
-            UserDAOImpl userDAO = new UserDAOImpl(DatasourceConfig.mysqlDataSource().getConnection());
-            User user = userDAO.getUserByUsername(username);
-            if (user == null) {
-                check = true;
-            }
-            return check;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return check;
+        return true;
     }
 
     public static boolean validatePassword(String password) {
