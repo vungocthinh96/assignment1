@@ -7,3 +7,5 @@ create a database in MySQL:
  - use file assignment1.sql in resource/database
  - open mysql use terminal, login
  - run command: source [path to file assignment1.sql]
+
+run the main method in the class Assignment1
