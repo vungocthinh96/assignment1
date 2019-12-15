@@ -1,101 +1,89 @@
 package dao;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class UserDAOImpl implements UserDAO {
-    private Connection connection;
-
-    public UserDAOImpl(Connection connection) {
-        this.connection = connection;
-    }
-
+public class UserDAOImpl implements UserDAO{
     @Override
     public User getUserByUsername(String username) {
-        String sqlTemplate = "select * from user where username = ?";
         User user = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
         try {
-            statement = connection.prepareStatement(sqlTemplate);
-            statement.setString(1, username);
-            rs = statement.executeQuery();
-
-            if (rs.next()) {
-                user = new User();
-                user.setUsername(rs.getString(2));
-                user.setPassword(rs.getString(3));
-                user.setName(rs.getString(4));
-                user.setPhone(rs.getString(5));
-                user.setEmail(rs.getString(6));
-                user.setAddress(rs.getString(7));
-                user.setDateOfBirth(rs.getString(8));
+            BufferedReader csvReader =
+                    new BufferedReader(new FileReader("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv"));
+            String row;
+            while ((row = csvReader.readLine()) != null) {
+                String[] data = row.split(",");
+                if(data[0].equals(username)) {
+                    user = new User(data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+                    break;
+                }
             }
-        } catch (SQLException e) {
+        } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (rs != null && !rs.isClosed()) rs.close();
-                if (statement != null && !statement.isClosed()) statement.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
         return user;
+
     }
 
     @Override
     public int addAccountToDB(User user) {
-        String sql = "INSERT INTO user\n" +
-                "(username, password, name, phone, email, address, date_of_birth)\n" +
-                "VALUES(?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement statement = null;
+        int result = 0;
         try {
-            statement = connection.prepareStatement(sql);
-            statement.setString(1, user.getUsername());
-            statement.setString(2, user.getPassword());
-            statement.setString(3, user.getName());
-            statement.setString(4, user.getPhone());
-            statement.setString(5, user.getEmail());
-            statement.setString(6, user.getAddress());
-            statement.setString(7, user.getDateOfBirth());
-            statement.execute();
-        } catch (SQLException e) {
+            FileWriter csvWriter = new FileWriter("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv", true);
+            List<String> userString = Arrays.asList(
+                    user.getUsername(), user.getPassword(),
+                    user.getName(), user.getPhone(),
+                    user.getEmail(), user.getAddress(), user.getDateOfBirth());
+            csvWriter.append(String.join(",", userString));
+            csvWriter.append("\n");
+            csvWriter.flush();
+            csvWriter.close();
+            result = 1;
+        } catch (IOException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (statement != null && !statement.isClosed())
-                    statement.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
         }
-        return 1;
+        return result;
     }
 
     @Override
     public int changePassword(String username, String password) {
-        String sql = "UPDATE user SET password= ? where username = ?";
-        PreparedStatement statement = null;
+        int check = 0;
         try {
-            statement = connection.prepareStatement(sql);
-            statement.setString(1, password);
-            statement.setString(2, username);
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (statement != null && !statement.isClosed())
-                    statement.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
+            BufferedReader csvReader =
+                    new BufferedReader(new FileReader("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv"));
+            String row;
+            List<String[]> strings = new ArrayList<String[]>();
+            while ((row = csvReader.readLine()) != null) {
+                String[] data = row.split(",");
+                if(data[0].equals(username)) {
+                    System.out.println(data[1]);
+                    data[1] = password;
+                    System.out.println(data[1]);
+                    check = 1;
+                }
+                strings.add(data);
             }
+            FileWriter csvWriter = new FileWriter("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv");
+            for(String[] userString: strings) {
+                csvWriter.append(String.join(",", userString));
+                csvWriter.append("\n");
+            }
+            csvWriter.flush();
+            csvWriter.close();
+            csvReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
-        return 1;
+        return check;
     }
 }

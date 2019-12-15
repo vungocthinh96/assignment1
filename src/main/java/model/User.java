@@ -1,7 +1,7 @@
 package model;
 
 public class User {
-//    private int id;
+
     private String username;
     private String password;
     private String name;
@@ -80,5 +80,10 @@ public class User {
 
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    @Override
+    public String toString() {
+        return username + " " + password + " " + name + " " + phone + " " + email + " " + address + " " + dateOfBirth;
     }
 }
