@@ -1,12 +1,8 @@
 package dao;
 
 import model.User;
-import utils.Utils;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,23 +10,12 @@ import java.util.List;
 public class UserDAOImpl implements UserDAO{
     @Override
     public User getUserByUsername(String username) {
-        URL res = UserDAOImpl.class.getClassLoader().getResource("database/assignment1.csv");
-        String absolutePath = "";
-        try {
-            File file = Paths.get(res.toURI()).toFile();
-            absolutePath = file.getAbsolutePath();
-        } catch (URISyntaxException e) {
-            System.out.println(e.getMessage());
-        }
-
+        File file = new File("src/main/resources/database/assignment1.csv");
+        String path = file.getAbsolutePath();
         User user = null;
         try {
-//            BufferedReader csvReader =
-//                    new BufferedReader(new InputStreamReader(
-//                            getClass().getClassLoader().getResourceAsStream("database/assignment1.csv"))
-//                    );
-//
-            BufferedReader csvReader = new BufferedReader(new FileReader(absolutePath));
+
+            BufferedReader csvReader = new BufferedReader(new FileReader(path));
             String row;
             while ((row = csvReader.readLine()) != null) {
                 String[] data = row.split(",");
@@ -52,19 +37,10 @@ public class UserDAOImpl implements UserDAO{
     @Override
     public int addAccountToDB(User user) {
         int result = 0;
-        URL res = UserDAOImpl.class.getClassLoader().getResource("database/assignment1.csv");
-        String absolutePath = "";
+        File file = new File("src/main/resources/database/assignment1.csv");
+        String path = file.getAbsolutePath();
         try {
-            File file = Paths.get(res.toURI()).toFile();
-            absolutePath = file.getAbsolutePath();
-        } catch (URISyntaxException e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-//            FileWriter csvWriter = new FileWriter(
-//                    String.valueOf(getClass().getClassLoader().getResource(
-//                            "database/assignment1.csv")), true);
-            FileWriter csvWriter = new FileWriter(absolutePath, true);
+            FileWriter csvWriter = new FileWriter(path, true);
             List<String> userString = Arrays.asList(
                     user.getUsername(), user.getPassword(),
                     user.getName(), user.getPhone(),
@@ -83,20 +59,10 @@ public class UserDAOImpl implements UserDAO{
     @Override
     public int changePassword(String username, String password) {
         int check = 0;
-        URL res = UserDAOImpl.class.getClassLoader().getResource("database/assignment1.csv");
-        String absolutePath = "";
+        File file = new File("src/main/resources/database/assignment1.csv");
+        String path = file.getAbsolutePath();
         try {
-            File file = Paths.get(res.toURI()).toFile();
-            absolutePath = file.getAbsolutePath();
-        } catch (URISyntaxException e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-//            BufferedReader csvReader =
-//                    new BufferedReader(new InputStreamReader(
-//                            getClass().getClassLoader().getResourceAsStream("database/assignment1.csv"))
-//                    );
-            BufferedReader csvReader = new BufferedReader(new FileReader(absolutePath));
+            BufferedReader csvReader = new BufferedReader(new FileReader(path));
             String row;
             List<String[]> strings = new ArrayList<String[]>();
             while ((row = csvReader.readLine()) != null) {
@@ -107,10 +73,8 @@ public class UserDAOImpl implements UserDAO{
                 }
                 strings.add(data);
             }
-//            FileWriter csvWriter = new FileWriter(
-//                    String.valueOf(getClass().getClassLoader().getResourceAsStream(
-//                            "database/assignment1.csv")));
-            FileWriter csvWriter = new FileWriter(absolutePath);
+
+            FileWriter csvWriter = new FileWriter(path);
             for(String[] userString: strings) {
                 csvWriter.append(String.join(",", userString));
                 csvWriter.append("\n");
