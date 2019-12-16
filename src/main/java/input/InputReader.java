@@ -1,5 +1,6 @@
 package input;
 
+import jdk.internal.util.xml.impl.Input;
 import model.Account;
 import model.User;
 
@@ -62,5 +63,37 @@ public class InputReader {
             System.out.println("Error while entering information");
         }
         return account;
+    }
+
+    public String getYesNo() {
+        String changePassword = "";
+        try {
+            System.out.print("Do you want change password now? Y/N: ");
+            changePassword = scanner.next();
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
+        return changePassword;
+    }
+
+    public String readOldPassword() {
+        String oldPassword = "";
+        try {
+            System.out.println("Old password: ");
+            oldPassword = scanner.next();
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
+        return oldPassword;
+    }
+
+    public String readNewPassword() {
+        String newPassword = "";
+        try {
+            newPassword = scanner.next();
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
+        return newPassword;
     }
 }

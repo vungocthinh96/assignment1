@@ -73,9 +73,9 @@ public class Validator {
         return pattern.matcher(dateOfBirth).matches();
     }
 
-    public String md5Encrypt(String password) {
+    public String Encrypt(String password, String typeEncoder) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance(typeEncoder);
             md.update(password.getBytes());
             byte[] byteData = md.digest();
             StringBuffer sb = new StringBuffer();

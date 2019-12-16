@@ -1,6 +1,6 @@
 import dao.UserDAOImpl;
 import input.InputReader;
-import controller.MainController;
+import controller.UserController;
 import model.Account;
 import model.User;
 import utils.Validator;
@@ -10,35 +10,19 @@ import java.util.Scanner;
 
 public class Assignment1 {
 
-    private MainController mainController;
+    private UserController userController;
     private InputReader inputReader;
 
-    public Assignment1(MainController mainController, InputReader inputReader) {
-        this.mainController = mainController;
-        this.inputReader = inputReader;
-    }
-
-    public MainController getMainController() {
-        return mainController;
-    }
-
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    public InputReader getInputReader() {
-        return inputReader;
-    }
-
-    public void setInputReader(InputReader inputReader) {
+    public Assignment1(UserController userController, InputReader inputReader) {
+        this.userController = userController;
         this.inputReader = inputReader;
     }
 
     public static void main(String[] args) {
 
         InputReader inputUser = new InputReader(new Scanner(System.in));
-        MainController mainController = new MainController(new UserDAOImpl(), new Validator());
-        Assignment1 assignment1 = new Assignment1(mainController, inputUser);
+        UserController userController = new UserController(inputUser, new UserDAOImpl(), new Validator());
+        Assignment1 assignment1 = new Assignment1(userController, inputUser);
         while (true) {
             assignment1.run();
         }
@@ -57,11 +41,11 @@ public class Assignment1 {
             switch (option) {
                 case 1:
                     User user = inputReader.inputUser();
-                    mainController.addAccount(user);
+                    userController.addAccount(user);
                     break;
                 case 2:
                     Account account = inputReader.inputAccount();
-                    mainController.login(account);
+                    userController.login(account);
                     break;
                 case 3:
                     System.exit(0);

@@ -1,38 +1,25 @@
 package controller;
 
+import dao.UserDAO;
 import dao.UserDAOImpl;
+import input.InputReader;
 import model.Account;
 import model.User;
 import utils.Validator;
 
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
-public class MainController {
-
-    private UserDAOImpl userDAO;
+public class UserController {
+    private InputReader inputReader;
+    private UserDAO userDAO;
     private Validator validator;
 
-    public MainController(UserDAOImpl userDAO, Validator validator) {
+    public UserController(InputReader inputReader, UserDAOImpl userDAO, Validator validator) {
+        this.inputReader = inputReader;
         this.userDAO = userDAO;
         this.validator = validator;
     }
 
-    public UserDAOImpl getUserDAO() {
-        return userDAO;
-    }
-
-    public void setUserDAO(UserDAOImpl userDAO) {
-        this.userDAO = userDAO;
-    }
-
-    public Validator getValidator() {
-        return validator;
-    }
-
-    public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
 
     public void addAccount(User user) {
         System.out.println("--------------- Add User -----------------");
@@ -43,7 +30,7 @@ public class MainController {
             /**
              * add user to database
              */
-            String md5Password = validator.md5Encrypt(user.getPassword());
+            String md5Password = validator.Encrypt(user.getPassword(), "MD5");
             user.setPassword(md5Password);
             userDAO.addAccountToDB(user);
             System.out.println("added account to database");
@@ -76,11 +63,9 @@ public class MainController {
         }
         try {
             User user = userDAO.getUserByUsername(account.getUsername());
-            if (account.getUsername().equals(user.getUsername()) && validator.md5Encrypt(account.getPassword()).equals(user.getPassword())) {
+            if (account.getUsername().equals(user.getUsername()) && validator.Encrypt(account.getPassword(), "MD5").equals(user.getPassword())) {
                 System.out.println("-------------------- Welcome ------------------\nHi " + account.getUsername());
-                System.out.print("Do you want change password now? Y/N: ");
-                Scanner scanner = new Scanner(System.in);
-                String changePassword = scanner.nextLine();
+                String changePassword = inputReader.getYesNo();
                 if (changePassword.equals("Y") || changePassword.equals("y")) {
                     int change = changePassword(account.getUsername(), account.getPassword());
                     if (change == 0) {
@@ -98,23 +83,21 @@ public class MainController {
     }
 
     public int changePassword(String username, String password) {
-        Scanner scanner = new Scanner(System.in);
         int change = 0;
         try {
-            System.out.println("Old password: ");
-            String oldPassword = scanner.nextLine();
+            String oldPassword = inputReader.readOldPassword();
             if (!(oldPassword.equals(password))) {
                 System.out.println("old password invalid !!!");
                 return 0;
             }
             System.out.println("new password: ");
-            String newPassword = scanner.nextLine();
+            String newPassword = inputReader.readNewPassword();
             System.out.println("new password: ");
-            String reNewPassword = scanner.nextLine();
+            String reNewPassword = inputReader.readNewPassword();
             if (newPassword == null || newPassword.isEmpty() || newPassword.trim().isEmpty() || !(newPassword.equals(reNewPassword))) {
                 System.out.println("new password invalid !!!");
             } else {
-                change  = userDAO.changePassword(username, validator.md5Encrypt(newPassword));
+                change  = userDAO.changePassword(username, validator.Encrypt(newPassword, "MD5"));
 
             }
         } catch (InputMismatchException e) {

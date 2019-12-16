@@ -1,7 +1,5 @@
 package dao;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
 import model.User;
 
 import java.io.*;
@@ -12,10 +10,13 @@ import java.util.List;
 public class UserDAOImpl implements UserDAO{
     @Override
     public User getUserByUsername(String username) {
+
         User user = null;
         try {
             BufferedReader csvReader =
-                    new BufferedReader(new FileReader("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv"));
+                    new BufferedReader(new InputStreamReader(
+                            getClass().getClassLoader().getResourceAsStream("database/assignment1.csv"))
+                    );
             String row;
             while ((row = csvReader.readLine()) != null) {
                 String[] data = row.split(",");
@@ -24,6 +25,7 @@ public class UserDAOImpl implements UserDAO{
                     break;
                 }
             }
+            csvReader.close();
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {
@@ -37,7 +39,9 @@ public class UserDAOImpl implements UserDAO{
     public int addAccountToDB(User user) {
         int result = 0;
         try {
-            FileWriter csvWriter = new FileWriter("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv", true);
+            FileWriter csvWriter = new FileWriter(
+                    String.valueOf(getClass().getClassLoader().getResource(
+                            "database/assignment1.csv")), true);
             List<String> userString = Arrays.asList(
                     user.getUsername(), user.getPassword(),
                     user.getName(), user.getPhone(),
@@ -58,20 +62,22 @@ public class UserDAOImpl implements UserDAO{
         int check = 0;
         try {
             BufferedReader csvReader =
-                    new BufferedReader(new FileReader("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv"));
+                    new BufferedReader(new InputStreamReader(
+                            getClass().getClassLoader().getResourceAsStream("database/assignment1.csv"))
+                    );
             String row;
             List<String[]> strings = new ArrayList<String[]>();
             while ((row = csvReader.readLine()) != null) {
                 String[] data = row.split(",");
                 if(data[0].equals(username)) {
-                    System.out.println(data[1]);
                     data[1] = password;
-                    System.out.println(data[1]);
                     check = 1;
                 }
                 strings.add(data);
             }
-            FileWriter csvWriter = new FileWriter("/home/thinhvn/Documents/java/assignment/assignment1/src/main/resources/database/assignment1.csv");
+            FileWriter csvWriter = new FileWriter(
+                    String.valueOf(getClass().getClassLoader().getResourceAsStream(
+                            "database/assignment1.csv")));
             for(String[] userString: strings) {
                 csvWriter.append(String.join(",", userString));
                 csvWriter.append("\n");
